@@ -1,0 +1,7 @@
+{
+  "name": "mockjs",
+  "version": false,
+  "dependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160415060238"
+  }
+}
