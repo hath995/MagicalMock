@@ -53,11 +53,70 @@ function setupMockGetterSetters(mockfn) {
 }
 
 let mock_methods = {
-  assert_called_with() {},
-  assert_called_once_with() {},
-  assert_any_call() {},
-  assert_has_calls() {},
-  assert_not_called() {},
+  assert_called_with(...args) {
+    this.call_args.forEach((elem, index) => {
+      if(args[index] !== elem) {
+        throw new Error("Mock called with different parameters")
+      }
+    });
+  },
+  assert_called_once_with(...args) {
+    if(this.call_count !== 1) {
+      throw new Error("Mock not called");
+    }
+    this.call_args.forEach((elem, index) => {
+      if(args[index] !== elem) {
+        throw new Error("Mock called with different parameters")
+      }
+    });
+  },
+  assert_any_call(...args) {
+    let has_call = this.call_args_list.some((arg_list) => {
+      return args.reduce((memo, current, index) => {
+        return memo && current === arg_list[index];
+      }, true)
+    });
+    if(!has_call) {
+      throw Error("Mock was not called with specified parameters")
+    }
+  },
+  assert_has_calls(calls, any_order=false) {
+    let matching = true;
+    if(!any_order) {
+      let start = this.call_args_list.findIndex((arg_list) => {
+        if(calls.length === 0) {
+          return false
+        }
+        return calls[0].reduce((memo, current, index) => {
+          return memo && current === arg_list[index];
+        }, true);
+      });
+      for(let i = 0; i < calls.length; i++) {
+        matching = matching && this.call_args_list[start + i].reduce((memo, current, index) => {
+          return memo && current == calls[i][index];
+        }, true);
+      }
+    }else{
+      matching = false;
+      //slow
+      matching = calls.every((call) => {
+        return this.call_args_list.some((arg_list) => {
+          return call.reduce((memo, current, index) => {
+            return memo && current === arg_list[index];
+          });
+        });
+      });
+    }
+
+    if(!matching) {
+      throw new Error("Mock was not called with all expected calls");
+    }
+  },
+  assert_not_called() {
+    if(this.call_count !== 0) {
+      throw new Error("Mock was called")
+    }
+  },
 }
 
 let proxy_handler = {
@@ -104,7 +163,7 @@ let proxy_handler = {
   }
 };
 
-setupMockMethods(mockfn) {
+function setupMockMethods(mockfn) {
   for(var method in mock_methods) {
     mockfn[method] = mock_methods[method];
   }

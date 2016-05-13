@@ -111,4 +111,79 @@ describe("Mock", () => {
     expect(mock instanceof Mock).to.be.false;
     expect(() => mock.__proto__ = Foo).to.throw(Error);
   });
+
+  it("Should throw an error if assert_called_with arguments do not match last call", () => {
+    let mock = new Mock();
+    mock();
+    mock(1,2,3);
+    expect(() => mock.assert_called_with(1,2,3)).to.not.throw(Error);
+    expect(() => mock.assert_called_with()).to.throw(Error);
+  });
+
+  it("Should throw an error if assert_called_once_with if the function has not been called", () => {
+    let mock = new Mock();
+    expect(() => mock.assert_called_once_with(1,2)).to.throw(Error);
+  });
+
+  it("Should throw an error if assert_called_once_with if the function has not been called", () => {
+    let mock = new Mock();
+    expect(() => mock.assert_called_once_with(1,2)).to.throw(Error);
+  });
+
+  it("Should not throw an error if assert_called_once_with if the function has been called", () => {
+    let mock = new Mock();
+    mock(1,2)
+    expect(() => mock.assert_called_once_with(1,2)).to.not.throw(Error);
+  });
+
+  it("Should throw an error is assert_not_called when it has been called", () => {
+    let mock = new Mock();
+    expect(() => mock.assert_not_called()).to.not.throw(Error);
+    expect(() => (mock(), mock.assert_not_called())).to.throw(Error);
+  })
+
+  it("Should throw an error if not called or not called with arguments for assert_any_call", () => {
+    let mock = new Mock();
+    expect(() => mock.assert_any_call()).to.throw(Error);
+    mock();
+    expect(() => mock.assert_any_call()).to.not.throw(Error);
+    expect(() => mock.assert_any_call(1,2,3)).to.throw(Error);
+  })
+
+  it("Should throw an error if not called with specified parameters at any point", () => {
+    let mock = new Mock();
+    expect(() => mock.assert_any_call()).to.throw(Error);
+    expect(() => mock.assert_any_call(1,2,3)).to.throw(Error);
+    mock();
+    expect(() => mock.assert_any_call()).to.not.throw(Error);
+    expect(() => mock.assert_any_call(1,2,3)).to.throw(Error);
+    mock(1,2,3);
+    mock(3,4,5);
+    expect(() => mock.assert_any_call(1,2,3)).to.not.throw(Error);
+  });
+
+  it("Should throw an error if assert_has_calls does not have calls that were called in order", () => {
+    let mock = new Mock();
+    mock();
+    expect(() => mock.assert_has_calls([[],[1,2,3]])).to.throw(Error);
+    mock(1,2,3);
+    expect(() => mock.assert_has_calls([[],[1,2,3]])).to.not.throw(Error);
+
+    let mock2 = new Mock();
+    mock(1,2);
+    mock(3,4);
+    mock(4,5);
+    expect(() => mock.assert_has_calls([[3,4],[4,5]]).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[1,2],[4,5]]).to.throw(Error);
+  });
+
+  it("Should throw an error if assert_has_calls does not have calls that were called in any order", () => {
+    let mock = new Mock();
+    mock(1,2);
+    mock(3,4);
+    mock(4,5);
+    expect(() => mock.assert_has_calls([[3,4],[4,5]], true).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[1,2],[4,5]], true).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[4,6],[4,5]], true).to.throw(Error);
+  });
 })
