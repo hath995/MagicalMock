@@ -6,7 +6,6 @@ describe("Mock", () => {
   it("Should be callable, and return a new mock", () => {
     let mock = new Mock();
     let result = mock();
-    console.log(result);
     expect(result).to.be.instanceof(Mock);
   }) 
 
@@ -74,7 +73,16 @@ describe("Mock", () => {
     expect(mock()).to.equal(1);
     expect(mock()).to.equal(2);
     expect(mock()).to.equal(3);
+
   });
+
+  it("Should return a series of different values when given an interator", () => {
+    let mock2 = new Mock();
+    mock2.side_effect = (function*(){ yield* [1,2,3]})();
+    expect(mock2()).to.equal(1);
+    expect(mock2()).to.equal(2);
+    expect(mock2()).to.equal(3);
+  })
 
   it("Should raise an exception when given a side_effect", () => {
     let mock = new Mock();
@@ -94,4 +102,13 @@ describe("Mock", () => {
     mock.side_effect = (x,y) => x + y;
     expect(mock(1,2)).to.equal(3);
   })
+
+  it("Should pretend to be another class", () => {
+    function Foo() {}
+    let mock = new Mock();
+    mock.spec = Foo;
+    expect(mock instanceof Foo).to.be.true;
+    expect(mock instanceof Mock).to.be.false;
+    expect(() => mock.__proto__ = Foo).to.throw(Error);
+  });
 })
