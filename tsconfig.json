@@ -7,7 +7,6 @@
         "allowJs": true,
         "allowUnreachableCode": false,
         "noFallthroughCasesInSwitch": true,
-        "noImplicitReturn": true,
         "strictNullChecks": true
     },
     "exclude": [
