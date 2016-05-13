@@ -52,6 +52,14 @@ function setupMockGetterSetters(mockfn) {
     });
 }
 
+let mock_methods = {
+  assert_called_with() {},
+  assert_called_once_with() {},
+  assert_any_call() {},
+  assert_has_calls() {},
+  assert_not_called() {},
+}
+
 let proxy_handler = {
   apply(target, thisObj, args) {
     target.called = true;
@@ -96,12 +104,19 @@ let proxy_handler = {
   }
 };
 
+setupMockMethods(mockfn) {
+  for(var method in mock_methods) {
+    mockfn[method] = mock_methods[method];
+  }
+}
+ 
 export class Mock {
 
   constructor() {
     let mockfn = function() {};
     setupMockProperties(mockfn);
     setupMockGetterSetters(mockfn);
+    setupMockMethods(mockfn);
 
     let proxy_obj = new Proxy(mockfn, proxy_handler);
     return proxy_obj;
