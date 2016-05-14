@@ -28,7 +28,7 @@ gulp.task('pre-test', ['build'], function () {
 });
  
 gulp.task('test', ['pre-test'], function () {
-  return gulp.src(['test/*.js'])
+  return gulp.src(['tests/*.js'])
     .pipe(mocha())
     // Creating the reports after tests ran 
     .pipe(istanbul.writeReports())

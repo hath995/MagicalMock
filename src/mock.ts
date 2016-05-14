@@ -29,19 +29,19 @@ function setupMockGetterSetters(mockfn) {
       }
     });
     Object.defineProperty(mockfn, "side_effect", {
-      get() {
-        return this[SIDE_EFFECT];
-      },
-      set(val) {
-        if(val instanceof Function) {
-          this[SIDE_EFFECT] = val;
-          else if(val[Symbol.iterator]) {
-            this[SIDE_EFFECT] = (function*() {yield * val})();
-          }else{
-            this[SIDE_EFFECT] = (function*() {yield val})();
-          }
+        get() {
+            return this[SIDE_EFFECT];
+        },
+        set(val) {
+            if(val instanceof Function) {
+                this[SIDE_EFFECT] = val;
+            }else if(val[Symbol.iterator]) {
+                this[SIDE_EFFECT] = (function*() {yield * val})();
+            }else{
+                this[SIDE_EFFECT] = (function*() {yield val})();
+            }
         }
-      });
+    });
     Object.defineProperty(mockfn, "spec", {
       set(val) {
         this[INSTANCE_TYPE] = val;

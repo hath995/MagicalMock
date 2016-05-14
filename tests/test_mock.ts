@@ -70,6 +70,7 @@ describe("Mock", () => {
   it("Should return a series of different values when given an array return value", () => {
     let mock = new Mock();
     mock.side_effect = [1,2,3];
+    expect(mock.side_effect.next).to.be.instanceof(Function);
     expect(mock()).to.equal(1);
     expect(mock()).to.equal(2);
     expect(mock()).to.equal(3);
@@ -133,6 +134,7 @@ describe("Mock", () => {
   it("Should not throw an error if assert_called_once_with if the function has been called", () => {
     let mock = new Mock();
     mock(1,2)
+    expect(() => mock.assert_called_once_with(2,3)).to.throw(Error);
     expect(() => mock.assert_called_once_with(1,2)).to.not.throw(Error);
   });
 
@@ -164,7 +166,9 @@ describe("Mock", () => {
 
   it("Should throw an error if assert_has_calls does not have calls that were called in order", () => {
     let mock = new Mock();
+    expect(() => mock.assert_has_calls([])).to.not.throw(Error);
     mock();
+    expect(() => mock.assert_has_calls([])).to.not.throw(Error);
     expect(() => mock.assert_has_calls([[],[1,2,3]])).to.throw(Error);
     mock(1,2,3);
     expect(() => mock.assert_has_calls([[],[1,2,3]])).to.not.throw(Error);
@@ -173,8 +177,8 @@ describe("Mock", () => {
     mock(1,2);
     mock(3,4);
     mock(4,5);
-    expect(() => mock.assert_has_calls([[3,4],[4,5]]).to.not.throw(Error);
-    expect(() => mock.assert_has_calls([[1,2],[4,5]]).to.throw(Error);
+    expect(() => mock.assert_has_calls([[3,4],[4,5]])).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[1,2],[4,5]])).to.throw(Error);
   });
 
   it("Should throw an error if assert_has_calls does not have calls that were called in any order", () => {
@@ -182,8 +186,8 @@ describe("Mock", () => {
     mock(1,2);
     mock(3,4);
     mock(4,5);
-    expect(() => mock.assert_has_calls([[3,4],[4,5]], true).to.not.throw(Error);
-    expect(() => mock.assert_has_calls([[1,2],[4,5]], true).to.not.throw(Error);
-    expect(() => mock.assert_has_calls([[4,6],[4,5]], true).to.throw(Error);
+    expect(() => mock.assert_has_calls([[3,4],[4,5]], true)).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[1,2],[4,5]], true)).to.not.throw(Error);
+    expect(() => mock.assert_has_calls([[4,6],[4,5]], true)).to.throw(Error);
   });
 })
