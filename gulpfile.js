@@ -45,3 +45,7 @@ gulp.task('remap', function() {
             }
         }));
 });
+
+gulp.task('dist', ['build'], function() {
+    return gulp.src('src/mock.js').pipe(gulp.dest('dist'));
+});
