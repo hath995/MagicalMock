@@ -190,4 +190,67 @@ describe("Mock", () => {
     expect(() => mock.assert_has_calls([[1,2],[4,5]], true)).to.not.throw(Error);
     expect(() => mock.assert_has_calls([[4,6],[4,5]], true)).to.throw(Error);
   });
+
+  it("Should return a mock if used as a constructor", () => {
+    let mock = new Mock()
+    let res = new mock();
+    expect(res).to.be.instanceof(Mock);
+  });
+
+  it("Should return a specified value if used as a constructor", () => {
+    let mock = new Mock();
+    mock.constructs = {x:4};
+    expect(new mock()).to.deep.equal({x:4});
+  });
+
+  it("Should yield a single value", () => {
+    let mock = new Mock();
+    mock.yields = 4;
+    let values = [];
+    for(let item of mock) {
+      values.push(item);
+    }
+    expect(values).to.deep.equal([4]);
+  });
+
+  it("Should throw an exception if given an exception to yield", () => {
+    let mock = new Mock();
+    mock.yields = Error("test");
+    let values = [];
+    expect(() => {
+      for(let item of mock) {
+        values.push(item);
+      }
+    }).to.throw(Error);
+    expect(values).to.deep.equal([]);
+
+    mock.yields = [1,Error("test")];
+    values = [];
+    expect(() => {
+      for(let item of mock) {
+        values.push(item);
+      }
+    }).to.throw(Error);
+    expect(values).to.deep.equal([1]);
+  });
+
+  it("Should yield multiple values", () => {
+    let mock = new Mock();
+    mock.yields = [1,2,3];
+    let values = [];
+    for(let item of mock) {
+      values.push(item);
+    }
+    expect(values).to.deep.equal([1,2,3]);
+  });
+
+  it("Should yield values from a generator function", () => {
+    let mock = new Mock();
+    mock.yields = function*() { yield* [1,2,3] };
+    let values = [];
+    for(let item of mock) {
+      values.push(item);
+    }
+    expect(values).to.deep.equal([1,2,3]);
+  });
 })

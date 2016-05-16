@@ -3,6 +3,7 @@ const UNSET = Symbol("undefined");
 const RETURN_VALUE = Symbol("return_value");
 const SIDE_EFFECT = Symbol("side_effect");
 const INSTANCE_TYPE = Symbol("instance_type");
+const CONSTRUCTOR_VALUE = Symbol("constructor_value");
 let id = 1;
 
 function setupMockProperties(mockfn) {
@@ -10,6 +11,7 @@ function setupMockProperties(mockfn) {
   mockfn.call_count = 0;
   mockfn.id = id++;
   mockfn[RETURN_VALUE] = UNSET;
+  mockfn[CONSTRUCTOR_VALUE] = UNSET;
   mockfn.call_args = undefined;
   mockfn.call_args_list = [];
   mockfn.method_calls = [];
@@ -48,6 +50,34 @@ function setupMockGetterSetters(mockfn) {
         //instanceof seems to be having a side effect
         //I suspect the __proto__ is being cached
         this instanceof val;
+      }
+    });
+    Object.defineProperty(mockfn, "constructs", {
+      set(val) {
+        this[CONSTRUCTOR_VALUE] = val;
+      }
+    });
+    Object.defineProperty(mockfn, "yields", {
+      set(val) {
+        if(val instanceof Function) {
+          this[Symbol.iterator] = val;
+        } else if(val[Symbol.iterator]) {
+          this[Symbol.iterator] = function*() {
+            for(let item of val[Symbol.iterator]()) {
+              if(item instanceof Error) {
+                throw item;
+              }
+              yield item;
+            }
+          };
+        }else{
+          this[Symbol.iterator] = function*() {
+            if(val instanceof Error) {
+              throw val;
+            }
+            yield val
+          };
+        }
       }
     });
 }
@@ -160,11 +190,18 @@ let proxy_handler = {
     //another reasonable thing to do would be
     //setting target[INSTANCE_TYPE] = proto
     throw new Error('Changing the prototype is forbidden; Use spec instead');
+  },
+  construct(target, argumentList, newTarget) {
+    if(target[CONSTRUCTOR_VALUE] === UNSET) {
+      return new Mock();
+    }else{
+      return target[CONSTRUCTOR_VALUE];
+    }
   }
 };
 
 function setupMockMethods(mockfn) {
-  for(var method in mock_methods) {
+  for(let method in mock_methods) {
     mockfn[method] = mock_methods[method];
   }
 }
