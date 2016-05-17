@@ -14,7 +14,6 @@ function setupMockProperties(mockfn) {
   mockfn[CONSTRUCTOR_VALUE] = UNSET;
   mockfn.call_args = undefined;
   mockfn.call_args_list = [];
-  mockfn.method_calls = [];
 }
 
 function setupMockGetterSetters(mockfn) {
