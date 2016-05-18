@@ -49,7 +49,7 @@ __Examples__
 
 ---------------------------------------
 <a name="call_count"></a>
-### call_count
+### call\_count
 
 An integer count of the number of times the mock object has been called as a function.
 
@@ -64,7 +64,7 @@ __Examples__
 
 ---------------------------------------
 <a name="call_args"></a>
-### call_args
+### call\_args
 
 A list of the arguments last used when calling the mock object as a function.
 
@@ -77,7 +77,7 @@ __Examples__
 ```
 ---------------------------------------
 <a name="call_args_list"></a>
-### call_args_list
+### call\_args\_list
 
 A list of argument lists of the arguments used when calling the mock object as a function.
 
@@ -91,9 +91,9 @@ __Examples__
 ```
 ---------------------------------------
 <a name="return_value"></a>
-### return_value
+### return\_value
 
-Calling a mock object as a function by default returns another mock object. However, by assigning return_value to a value the mock will return that value instead.
+Calling a mock object as a function by default returns another mock object. However, by assigning return\_value to a value the mock will return that value instead.
 
 __Examples__
 
@@ -104,9 +104,9 @@ __Examples__
 ```
 ---------------------------------------
 <a name="side_effect"></a>
-### side_effect
+### side\_effect
 
-Side_effect allows the function to return successive values, throw errors, or substitute your own function for calling the mock as a function.
+Side\_effect allows the function to return successive values, throw errors, or substitute your own function for calling the mock as a function.
 
 __Examples__
 
@@ -172,12 +172,13 @@ __Examples__
 
 ```js
     let mock = new Mock();
-    mock.yields = [1,2]
+    mock.yields = [1,2, Error("explosion")]
     for(let item of mock) {
         console.log(item);
     }
     //1
     //2
+    //throws Error("foo")
 
     let mock2 = new Mock();
     mock2.yields = function* () { yield * [1,2] }
@@ -186,9 +187,12 @@ __Examples__
     }
     //1
     //2
-
 ```
 ---------------------------------------
 
-
 ## Methods
+
+<a name="assert_called_with"></a>
+### assert\_called\_with(...args)
+
+
