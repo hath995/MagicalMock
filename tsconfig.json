@@ -6,7 +6,7 @@
         "noImplicitAny": true,
         "allowJs": true,
         "allowUnreachableCode": false,
-        "noFallthroughCasesInSwitch": true,
+        "noFallthroughCasesInSwitch": true
     },
     "exclude": [
         "node_modules"
