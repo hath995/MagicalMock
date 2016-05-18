@@ -15,21 +15,21 @@ This library relies on heavily on ES6 Proxies, and so either a recent version of
 
 ### Properties
 * [`called`](#called)
-* [ `call_count`](#call_count)
-* [ `call_args`](#call_args)
-* [ `call_args_list`](#call_args_list)
-* [ `return_value`](#return_value)
-* [ `side_effect`](#side_effect)
-* [ `spec`](#spec)
-* [ `constructs`](#constructs)
-* [ `yields`](#yields)
+* [`call_count`](#call_count)
+* [`call_args`](#call_args)
+* [`call_args_list`](#call_args_list)
+* [`return_value`](#return_value)
+* [`side_effect`](#side_effect)
+* [`spec`](#spec)
+* [`constructs`](#constructs)
+* [`yields`](#yields)
 
 ### Methods
 * [`assert_called_with`](#assert_called_with)
-* [ `assert_called_once_with`](#assert_called_once_with)
-* [ `assert_any_call` ](#assert_any_call)
-* [ `assert_has_calls`](#assert_has_calls)
-* [ `assert_not_called`](#assert_not_called)
+* [`assert_called_once_with`](#assert_called_once_with)
+* [`assert_any_call`](#assert_any_call)
+* [`assert_has_calls`](#assert_has_calls)
+* [`assert_not_called`](#assert_not_called)
 
 ## Properties
 
@@ -50,6 +50,7 @@ __Examples__
 ---------------------------------------
 <a name="call_count"></a>
 ### call_count
+
 An integer count of the number of times the mock object has been called as a function.
 
 __Examples__
@@ -62,5 +63,132 @@ __Examples__
 ```
 
 ---------------------------------------
+<a name="call_args"></a>
+### call_args
+
+A list of the arguments last used when calling the mock object as a function.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(1,2);
+    console.log(mock.call_args); //[1,2]
+```
+---------------------------------------
+<a name="call_args_list"></a>
+### call_args_list
+
+A list of argument lists of the arguments used when calling the mock object as a function.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(1,2);
+    mock(3,4);
+    console.log(mock.call_args_list); //[[1,2], [3,4]
+```
+---------------------------------------
+<a name="return_value"></a>
+### return_value
+
+Calling a mock object as a function by default returns another mock object. However, by assigning return_value to a value the mock will return that value instead.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock.return_value = 4;
+    console.log(mock()) //4
+```
+---------------------------------------
+<a name="side_effect"></a>
+### side_effect
+
+Side_effect allows the function to return successive values, throw errors, or substitute your own function for calling the mock as a function.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock.side_effect = [1,2,Error("Problems occurred")];
+    mock() //1
+    mock() //2
+    mock() //throw Error("Problems occurred")
+
+    let mock2 = new Mock();
+    mock2.side_effect = function(input) {
+        if(input == 1) {
+            return "foo";
+        }else if(input == 2) {
+            return "bar";
+        }else{
+            return "baz";
+        }
+    }
+    mock2(1) //foo
+    mock2(2) //bar
+    mock2(3) //baz
+
+    let mock3 = new Mock();
+    mock3.side_effect = RangeError("Mock has gone too far");
+    mock3() //throws RangeError
+```
+---------------------------------------
+<a name="spec"></a>
+### spec
+
+Spec allows the mock to be assigned a prototype
+
+__Examples__
+
+```js
+    class Foo {};
+    let mock = new Mock();
+    mock.spec = Foo;
+    mock instanceof Foo //true
+```
+---------------------------------------
+<a name="constructs"></a>
+### constructs
+
+If you would like to use a mock as a contructor function you can specify what it will create.
+
+__Examples__
+
+```js
+    let mock = Mock();
+    mock.constructs = {x: 1, y: 2};
+    let result = new mock(); //{x: 1, y: 2}
+```
+---------------------------------------
+<a name="yields"></a>
+### yields
+
+If you would like to use a mock in a context as an iterator you can specify a value, or series of values, or an error to throw. If a generator function is provided instead then it will use that.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock.yields = [1,2]
+    for(let item of mock) {
+        console.log(item);
+    }
+    //1
+    //2
+
+    let mock2 = new Mock();
+    mock2.yields = function* () { yield * [1,2] }
+    for(let item of mock2) {
+        console.log(item);
+    }
+    //1
+    //2
+
+```
+---------------------------------------
+
 
 ## Methods
