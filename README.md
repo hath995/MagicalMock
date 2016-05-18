@@ -1,4 +1,6 @@
 # MagicalMock
+[![codecov](https://codecov.io/gh/hath995/MagicalMock/branch/master/graph/badge.svg)](https://codecov.io/gh/hath995/MagicalMock)
+
 
 MagicalMock is a convenience class for simplify creation of mock objects and functions for testing purposes. This package is a port of the python unittest.mock, with additional features for JavaScript.
 
