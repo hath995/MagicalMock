@@ -48,6 +48,7 @@ __Examples__
 ```
 
 ---------------------------------------
+
 <a name="call_count"></a>
 ### call\_count
 
@@ -63,6 +64,7 @@ __Examples__
 ```
 
 ---------------------------------------
+
 <a name="call_args"></a>
 ### call\_args
 
@@ -75,7 +77,9 @@ __Examples__
     mock(1,2);
     console.log(mock.call_args); //[1,2]
 ```
+
 ---------------------------------------
+
 <a name="call_args_list"></a>
 ### call\_args\_list
 
@@ -89,7 +93,9 @@ __Examples__
     mock(3,4);
     console.log(mock.call_args_list); //[[1,2], [3,4]
 ```
+
 ---------------------------------------
+
 <a name="return_value"></a>
 ### return\_value
 
@@ -102,7 +108,9 @@ __Examples__
     mock.return_value = 4;
     console.log(mock()) //4
 ```
+
 ---------------------------------------
+
 <a name="side_effect"></a>
 ### side\_effect
 
@@ -135,7 +143,9 @@ __Examples__
     mock3.side_effect = RangeError("Mock has gone too far");
     mock3() //throws RangeError
 ```
+
 ---------------------------------------
+
 <a name="spec"></a>
 ### spec
 
@@ -149,7 +159,9 @@ __Examples__
     mock.spec = Foo;
     mock instanceof Foo //true
 ```
+
 ---------------------------------------
+
 <a name="constructs"></a>
 ### constructs
 
@@ -162,7 +174,9 @@ __Examples__
     mock.constructs = {x: 1, y: 2};
     let result = new mock(); //{x: 1, y: 2}
 ```
+
 ---------------------------------------
+
 <a name="yields"></a>
 ### yields
 
@@ -188,6 +202,7 @@ __Examples__
     //1
     //2
 ```
+
 ---------------------------------------
 
 ## Methods
@@ -195,4 +210,104 @@ __Examples__
 <a name="assert_called_with"></a>
 ### assert\_called\_with(...args)
 
+Asserts that the arguments were the last arguments used when calling the mock object as a function
 
+__Arguments__
+
+* `args` - Variadic arguments matching the replaced function
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(3,4);
+    mock(1,2);
+    mock.assert_called_with(1,2) //passes
+    mock.assert_called_with(3,4) //throws Error
+```
+
+---------------------------------------
+
+<a name="assert_called_once_with"></a>
+### assert\_called\_once\_with(...args)
+
+Asserts that the mock was called once and only once with the specified arguments.
+
+__Arguments__
+
+* `args` - Variadic arguments matching the replaced function
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(1,2);
+    mock.assert_called_once_with(1,2); //passes
+    mock.assert_called_once_with(3,4); //throws Error because args do not match
+    mock(3,4)
+    mock.assert_called_once_with(3,4); //throws Error because mock was called more than once
+```
+
+---------------------------------------
+
+<a name="assert_any_call"></a>
+### assert\_any\_call(...args)
+
+Asserts that the mock was called with specified arguments at least once.
+
+__Arguments__
+
+* `args` - Variadic arguments matching the replaced function
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(1,2);
+    mock(3,4);
+    mock.assert_any_call(1,2); //passes
+    mock.assert_any_call(3,4); //passes
+    mock.assert_any_call(4,5); //throws Error
+```
+
+---------------------------------------
+
+<a name="assert_has_calls"></a>
+### assert\_has\_calls(calls, any\_order=false);
+
+Asserts that the mock was called with the specified list of argument lists, with the option to ensure the order of calls matched the list or to disregard order.
+
+
+__Arguments__
+
+* `calls` - list of argument lists
+* `any_order` - boolean deciding if calls order should be respected
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock(1,2);
+    mock(3,4);
+    mock(4,5);
+    mock.assert_has_calls([[3,4],[4,5]]) //passes
+    mock.assert_has_calls([[1,2],[4,5]]) //throws Error
+    mock.assert_has_calls([[1,2],[4,5]], true) //passes
+```
+
+---------------------------------------
+
+<a name="assert_not_called"></a>
+### assert\_not\_called()
+
+Asserts that the mock was not called as a function.
+
+__Examples__
+
+```js
+    let mock = new Mock();
+    mock.assert_not_called(); //passes
+    mock(1,2);
+    mock.assert_not_called(); //throws Error
+```
+---------------------------------------
