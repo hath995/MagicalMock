@@ -7,7 +7,6 @@
         "allowJs": true,
         "allowUnreachableCode": false,
         "noFallthroughCasesInSwitch": true,
-        "strictNullChecks": true
     },
     "exclude": [
         "node_modules"
