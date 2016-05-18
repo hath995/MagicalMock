@@ -1,0 +1,14 @@
+machine:
+  node:
+    version: 6.1.0
+
+dependencies:
+  pre:
+    - npm install -g mocha
+    - npm install -g gulp-cli
+    - npm install -g typescript
+    - npm install -g istanbul
+
+test:
+  post:
+    - istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec && cat ./coverage/coverage.json | ./node_modules/codecov.io/bin/codecov.io.js
