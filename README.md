@@ -11,6 +11,58 @@ npm i --save-dev magical-mock
 ## Requirements
 This library relies on heavily on ES6 Proxies, and so either a recent version of Node or the browsers will be required
 
+## Quick Examples
+---------------------------------------
+```js
+//given this hypothetical game function
+function gameWorld(world) {
+  if(world.player.meta.logged_in == true) {
+    return world.greet(player);
+  }else{
+    return world.disconnect(player)
+  }
+}
+
+it("Should let the logged in player see the greeeting", function() {
+    //if you wanted to test this function you might do something like the following
+    var world = {
+      player: {
+        meta: {
+          logged_in: true
+        },
+        name: "Foo"
+      },
+      greet: function(player) {
+        return "hello " + player.name;
+      },
+      disconnect: function(player) {
+        throw Error("logged in player should not disconnect");
+      }
+    }
+    expect(gameWorld(world)).to.equal("hello Foo");
+});
+
+//Now with mock we can do better with less code
+
+it("Should let the logged in player see the greeeting", function() {
+  let world = new Mock();
+  world.player.meta.logged_in = true;
+  gameWorld(world);
+  world.greet.assert_called_once_with(world.player);
+  world.disconnect.assert_not_called();
+```
+## Magic
+
+A mock object can generate properties when asked for. This makes targeting and replacing deeply nested properties within objects very quick.
+
+```js
+    let mock = new Mock();
+    mock.deeply.nested.prop = true
+    mock.always.returns.a.new.mock = true
+    mock.a.b.c.d.e.f.g.h = 10
+    mock.lets.place.a.func = function() { return false};
+```
+
 ## Documentation
 
 ### Properties
@@ -42,9 +94,9 @@ __Examples__
 
 ```js
     let mock = new Mock();
-    console.log(mock.called) //false
+    mock.called //false
     mock();
-    console.log(mock.called) //true
+    mock.called //true
 ```
 
 ---------------------------------------
@@ -60,7 +112,7 @@ __Examples__
     let mock = new Mock();
     mock();
     mock();
-    console.log(mock.call_count); //2
+    mock.call_count; //2
 ```
 
 ---------------------------------------
@@ -75,7 +127,7 @@ __Examples__
 ```js
     let mock = new Mock();
     mock(1,2);
-    console.log(mock.call_args); //[1,2]
+    mock.call_args; //[1,2]
 ```
 
 ---------------------------------------
@@ -91,7 +143,7 @@ __Examples__
     let mock = new Mock();
     mock(1,2);
     mock(3,4);
-    console.log(mock.call_args_list); //[[1,2], [3,4]
+    mock.call_args_list; //[[1,2], [3,4]]
 ```
 
 ---------------------------------------
@@ -106,7 +158,7 @@ __Examples__
 ```js
     let mock = new Mock();
     mock.return_value = 4;
-    console.log(mock()) //4
+    mock() //4
 ```
 
 ---------------------------------------
@@ -310,4 +362,3 @@ __Examples__
     mock(1,2);
     mock.assert_not_called(); //throws Error
 ```
----------------------------------------
